@@ -1,1 +1,1 @@
-# GECchatBot
+This is chatbot for all GECian students.
