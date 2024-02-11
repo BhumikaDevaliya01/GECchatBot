@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { 
-    userLogin,
     getAllUsers ,
+    userLogin,
     userSignup
 } from "../controllers/user-controllers.js";
 
@@ -18,6 +18,5 @@ userRoutes.get("/",getAllUsers);
 
 userRoutes.post("/signup",validate(signupValidator) ,userSignup);
 userRoutes.post("/login", validate(loginValidator), userLogin);
- 
-export default userRoutes;
 
+export default userRoutes;
