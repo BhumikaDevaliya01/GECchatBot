@@ -12,6 +12,7 @@ chatRoutes.post(
   "/new",
   validate(chatCompletionValidator),
   verifyToken,
+  generateChatCompletion
 );
 
 export default chatRoutes;
