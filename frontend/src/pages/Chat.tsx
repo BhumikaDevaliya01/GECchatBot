@@ -1,46 +1,30 @@
-import React, { useState } from "react";
-import { Box, Avatar, Typography, Button } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
 import red from "@mui/material/colors/red";
 import { useAuth } from "../context/AuthContext";
 import ChatItem from "../components/chat/ChatItem";
+import { IoMdSend } from "react-icons/io";
 
-// type Message = {
-//   content: string;
-//   role: "user" | "assistant";
-// };
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
 
-const chatMessages = [
-  {
-      "role": "user",
-      "content": "Hi there! Can you help me with some math problems?"
-  },
-  {
-      "role": "assistant",
-      "content": "Of course! I'd be happy to help. What specific math problems do you need assistance with?"
-  },
-  {
-      "role": "user",
-      "content": "I'm having trouble understanding calculus concepts, especially limits."
-  },
-  {
-      "role": "assistant",
-      "content": "Calculus can be tricky, but I'll do my best to explain. Let's start with the concept of limits. A limit is the value that a function approaches as the input approaches a certain value. For example, if we have the function f(x) = (x^2 - 1)/(x - 1), the limit of f(x) as x approaches 1 is 2. Do you follow so far?"
-  },
-  {
-      "role": "user",
-      "content": "Yes, that makes sense. Thank you for the explanation!"
-  },
-  {
-      "role": "assistant",
-      "content": "You're welcome! Feel free to ask if you have any more questions or if there's anything else I can help you with."
-  }
-]
 
 const Chat = () => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const auth = useAuth();
-  // const [chatMessages] = useState<Message[]>([]);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
-
+  const handleSubmit = async () => {
+    // console.log(inputRef.current?.value);
+    const content = inputRef.current?.value as string;
+    if (inputRef && inputRef.current) {
+      inputRef.current.value = "";
+    }
+    const newMessage: Message = { role: "user", content };
+    setChatMessages((prev) => [...prev, newMessage]);
+  };
 
   return (
 
@@ -144,12 +128,39 @@ const Chat = () => {
         >
           {chatMessages.map((chat,index) => (
           // <div>{chat.content}</div>
+          //@ts-ignore
           <ChatItem content={chat.content} role={chat.role} key={index} />
 
           ))}
         </Box>
 
-      
+        <div
+          style={{
+            width: "100%",
+            borderRadius: 8,
+            backgroundColor: "rgb(17,27,39)",
+            display: "flex",
+            margin: "auto",
+          }}
+        >
+          {" "}
+          <input
+            ref={inputRef}
+            type="text"
+            style={{
+              width: "100%",
+              backgroundColor: "transparent",
+              padding: "30px",
+              border: "none",
+              outline: "none",
+              color: "white",
+              fontSize: "20px",
+            }}
+          />
+          <IconButton onClick={handleSubmit} sx={{ color: "white", mx: 1 }}>
+            <IoMdSend />
+          </IconButton>
+          </div>
 
       </Box>
     </Box>
