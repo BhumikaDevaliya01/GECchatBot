@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { Box, Avatar, Typography, Button, IconButton} from "@mui/material";
+import { Box, Avatar, Typography, Button } from "@mui/material";
 import red from "@mui/material/colors/red";
 import { useAuth } from "../context/AuthContext";
+import ChatItem from "../components/chat/ChatItem";
+
+// type Message = {
+//   content: string;
+//   role: "user" | "assistant";
+// };
 
 const chatMessages = [
   {
@@ -32,6 +38,8 @@ const chatMessages = [
 
 const Chat = () => {
   const auth = useAuth();
+  // const [chatMessages] = useState<Message[]>([]);
+
 
 
   return (
@@ -80,8 +88,7 @@ const Chat = () => {
             You are talking to a ChatBOT
           </Typography>
           <Typography sx={{ mx: "auto", fontFamily: "work sans", my: 4, p: 3 }}>
-            You can ask some questions related to Knowledge, Business, Advices,
-            Education, etc. But avoid sharing personal information
+            You can ask some questions related to GEC college. But avoid sharing personal information
           </Typography>
           <Button
             sx={{
@@ -135,8 +142,14 @@ const Chat = () => {
             scrollBehavior: "smooth",
           }}
         >
-          {chatMessages.map((chat) => (<div>{chat.content}</div>))}
+          {chatMessages.map((chat,index) => (
+          // <div>{chat.content}</div>
+          <ChatItem content={chat.content} role={chat.role} key={index} />
+
+          ))}
         </Box>
+
+      
 
       </Box>
     </Box>
