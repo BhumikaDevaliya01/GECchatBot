@@ -1,14 +1,40 @@
-import React from "react";
-import { Box, Avatar, Typography} from "@mui/material";
+import React, { useState } from "react";
+import { Box, Avatar, Typography, Button, IconButton} from "@mui/material";
+import red from "@mui/material/colors/red";
 import { useAuth } from "../context/AuthContext";
+
+const chatMessages = [
+  {
+      "role": "user",
+      "content": "Hi there! Can you help me with some math problems?"
+  },
+  {
+      "role": "assistant",
+      "content": "Of course! I'd be happy to help. What specific math problems do you need assistance with?"
+  },
+  {
+      "role": "user",
+      "content": "I'm having trouble understanding calculus concepts, especially limits."
+  },
+  {
+      "role": "assistant",
+      "content": "Calculus can be tricky, but I'll do my best to explain. Let's start with the concept of limits. A limit is the value that a function approaches as the input approaches a certain value. For example, if we have the function f(x) = (x^2 - 1)/(x - 1), the limit of f(x) as x approaches 1 is 2. Do you follow so far?"
+  },
+  {
+      "role": "user",
+      "content": "Yes, that makes sense. Thank you for the explanation!"
+  },
+  {
+      "role": "assistant",
+      "content": "You're welcome! Feel free to ask if you have any more questions or if there's anything else I can help you with."
+  }
+]
 
 const Chat = () => {
   const auth = useAuth();
 
-  // return <div>chat</div>
 
   return (
-    // <div>chat</div>
 
     <Box
       sx={{
@@ -53,8 +79,65 @@ const Chat = () => {
             <Typography sx={{ mx: "auto", fontFamily: "work sans" }}>
             You are talking to a ChatBOT
           </Typography>
+          <Typography sx={{ mx: "auto", fontFamily: "work sans", my: 4, p: 3 }}>
+            You can ask some questions related to Knowledge, Business, Advices,
+            Education, etc. But avoid sharing personal information
+          </Typography>
+          <Button
+            sx={{
+              width: "200px",
+              my: "auto",
+              color: "white",
+              fontWeight: "700",
+              borderRadius: 3,
+              mx: "auto",
+              bgcolor: red[300],
+              ":hover": {
+                bgcolor: red.A400,
+              },
+            }}
+          >
+            Clear Conversation
+          </Button>
         </Box>
-      
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flex: { md: 0.8, xs: 1, sm: 1 },
+          flexDirection: "column",
+          px: 3,
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: "40px",
+            color: "white",
+            mb: 2,
+            mx: "auto",
+            fontWeight: "600",
+          }}
+        >
+          Model - GPT 3.5 Turbo
+        </Typography>
+        <Box
+          sx={{
+            width: "100%",
+            height: "60vh",
+            borderRadius: 3,
+            mx: "auto",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "scroll",
+            overflowX: "hidden",
+            overflowY: "auto",
+            scrollBehavior: "smooth",
+          }}
+        >
+          {chatMessages.map((chat) => (<div>{chat.content}</div>))}
+        </Box>
+
       </Box>
     </Box>
   );
