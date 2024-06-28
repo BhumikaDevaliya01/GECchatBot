@@ -1,9 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
 import red from "@mui/material/colors/red";
 import { useAuth } from "../context/AuthContext";
 import ChatItem from "../components/chat/ChatItem";
 import { IoMdSend } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import {
+  deleteUserChats,
+  getUserChats,
+  sendChatRequest,
+} from "../helpers/api-communicator";
+import toast from "react-hot-toast";
+import contentHtml from '../chatbot-master/index.html';
 
 type Message = {
   role: "user" | "assistant";
@@ -12,22 +20,73 @@ type Message = {
 
 
 const Chat = () => {
+  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const auth = useAuth();
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
-
+  // const [htmlContent, setHtmlContent] = useState('');
   const handleSubmit = async () => {
-    // console.log(inputRef.current?.value);
     const content = inputRef.current?.value as string;
     if (inputRef && inputRef.current) {
       inputRef.current.value = "";
     }
     const newMessage: Message = { role: "user", content };
     setChatMessages((prev) => [...prev, newMessage]);
+    const chatData = await sendChatRequest(content);
+    setChatMessages([...chatData.chats]);
+    //
   };
+  const handleDeleteChats = async () => {
+    try {
+      toast.loading("Deleting Chats", { id: "deletechats" });
+      await deleteUserChats();
+      setChatMessages([]);
+      toast.success("Deleted Chats Successfully", { id: "deletechats" });
+    } catch (error) {
+      console.log(error);
+      toast.error("Deleting chats failed", { id: "deletechats" });
+    }
+  };
+  useLayoutEffect(() => {
+    if (auth?.isLoggedIn && auth.user) {
+      toast.loading("Loading Chats", { id: "loadchats" });
+      getUserChats()
+        .then((data) => {
+          setChatMessages([...data.chats]);
+          toast.success("Successfully loaded chats", { id: "loadchats" });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Loading Failed", { id: "loadchats" });
+        });
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    if (!auth?.user) {
+      return navigate("/login");
+    }
+  }, [auth]);
+
+  function handleRedirectToIndex(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    throw new Error("Function not implemented.");
+  }
+
+  // const Chat: React.FC = () => {
+  //   const navigate = useNavigate();
+  
+  //   const handleOpenIndex = () => {
+  //     navigate('/index-content');
+  //   };
+  // };
+
+  const handleOpenIndex = () => {
+    const filePath = 'file:///F:/Project/chatbot-master/index.html';
+    window.open(filePath, '_blank');
+  };
+    
 
   return (
-
     <Box
       sx={{
         display: "flex",
@@ -45,7 +104,7 @@ const Chat = () => {
           flexDirection: "column",
         }}
       >
-      <Box
+        <Box
           sx={{
             display: "flex",
             width: "100%",
@@ -56,7 +115,7 @@ const Chat = () => {
             mx: 3,
           }}
         >
-            <Avatar
+          <Avatar
             sx={{
               mx: "auto",
               my: 2,
@@ -64,17 +123,19 @@ const Chat = () => {
               color: "black",
               fontWeight: 700,
             }}
-            >
-              {auth?.user?.name[0]}
-              {auth?.user?.name.split("")[1][0]}
-            </Avatar>
-            <Typography sx={{ mx: "auto", fontFamily: "work sans" }}>
+          >
+            {auth?.user?.name[0]}
+            {auth?.user?.name.split(" ")[1][0]}
+          </Avatar>
+          <Typography sx={{ mx: "auto", fontFamily: "work sans" }}>
             You are talking to a ChatBOT
           </Typography>
           <Typography sx={{ mx: "auto", fontFamily: "work sans", my: 4, p: 3 }}>
-            You can ask some questions related to GEC college. But avoid sharing personal information
+            You can ask some questions like related to addmition, Hostel, acadamic,
+            Education, etc. But avoid sharing personal information
           </Typography>
           <Button
+            onClick={handleDeleteChats}
             sx={{
               width: "200px",
               my: "auto",
@@ -93,6 +154,8 @@ const Chat = () => {
         </Box>
       </Box>
 
+
+
       <Box
         sx={{
           display: "flex",
@@ -101,6 +164,25 @@ const Chat = () => {
           px: 3,
         }}
       >
+        {/* <Button
+          onClick={handleOpenIndex}
+          sx={{
+            width: "200px",
+            my: 2,
+            color: "white",
+            fontWeight: "700",
+            borderRadius: 3,
+            mx: "auto",
+            bgcolor: "primary.main",
+            ":hover": {
+              bgcolor: "primary.dark",
+            },
+          }}
+        >
+          Go to Index
+        </Button> */}
+    
+      
         <Typography
           sx={{
             fontSize: "40px",
@@ -110,7 +192,7 @@ const Chat = () => {
             fontWeight: "600",
           }}
         >
-          Model - GPT 3.5 Turbo
+          GEC Chatbot
         </Typography>
         <Box
           sx={{
@@ -126,14 +208,14 @@ const Chat = () => {
             scrollBehavior: "smooth",
           }}
         >
-          {chatMessages.map((chat,index) => (
-          // <div>{chat.content}</div>
-          //@ts-ignore
-          <ChatItem content={chat.content} role={chat.role} key={index} />
-
+          {chatMessages.map((chat, index) => (
+            //@ts-ignore
+            <ChatItem content={chat.content} role={chat.role} key={index} />
           ))}
         </Box>
 
+
+        
         <div
           style={{
             width: "100%",
@@ -160,11 +242,12 @@ const Chat = () => {
           <IconButton onClick={handleSubmit} sx={{ color: "white", mx: 1 }}>
             <IoMdSend />
           </IconButton>
-          </div>
-
+        </div>
       </Box>
     </Box>
   );
 };
+
+
 
 export default Chat;

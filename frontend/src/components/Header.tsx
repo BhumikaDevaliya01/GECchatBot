@@ -7,8 +7,10 @@ import NavigationLink from "./shared/NavigationLink";
 
 const Header = () => {
   const auth = useAuth();
-    return (
-    <AppBar sx={{ bgcolor: "transparent", position: "static", boxShadow: "none" }}>
+  return (
+    <AppBar
+      sx={{ bgcolor: "transparent", position: "static", boxShadow: "none" }}
+    >
       <Toolbar sx={{ display: "flex" }}>
         <Logo />
         <div>
@@ -47,7 +49,7 @@ const Header = () => {
         </div>
       </Toolbar>
     </AppBar>
-    );
+  );
 };
 
 export default Header;

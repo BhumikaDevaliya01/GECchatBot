@@ -6,19 +6,26 @@ import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./context/AuthContext";
-// import Footer from "./components/footer/Footer";
-
+import Footer from "./components/footer/Footer";
+import IndexContent from './components/IndexContent';
 function App() {
-  
-  return <main>
-    <Header />
+  const auth = useAuth();
+
+  return (
+    <main>
+      <Header />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/*" element={<NotFound />} />
+        {auth?.isLoggedIn && auth.user && (
+          <Route path="/chat" element={<Chat />} />
+        )}
+        <Route path="/index-content" element={<IndexContent />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-  </main>
+    </main>
+  );
 }
-export default App
+
+export default App;

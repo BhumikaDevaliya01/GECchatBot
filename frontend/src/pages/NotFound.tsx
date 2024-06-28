@@ -1,9 +1,8 @@
-import React from 'react';
+import React from "react";
 
 const NotFound = () => {
-    return (
-        <div>NotFound</div>
-    )
-}
+  
+  return <div><a href="./components/index.html">Go</a></div>;
+};
 
 export default NotFound;
